@@ -5,7 +5,15 @@ User = get_user_model()
 
 
 class Tag(models.Model):
+    COLOR = (
+        ('green', 'green'),
+        ('purple', 'purple'),
+        ('orange', 'orange'),
+    )
+
     title = models.CharField(max_length=30, unique=True)
+    color = models.TextField(choices=COLOR)
+    slug = models.SlugField(unique=True, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Тэг'
@@ -37,7 +45,7 @@ class Recipe(models.Model):
         verbose_name='Автор'
     )
     title = models.CharField(max_length=60, verbose_name='Название')
-    image = models.ImageField(verbose_name='Картинка')
+    image = models.ImageField(verbose_name='Картинка', upload_to='recipes/')
     text = models.TextField(verbose_name='Описание')
     ingredient = models.ManyToManyField(
         Ingredient, verbose_name='Ингредиент',
@@ -47,11 +55,11 @@ class Recipe(models.Model):
         Tag, verbose_name='Тэг', related_name='recipes'
     )
     time = models.PositiveIntegerField(verbose_name='Время приготовления')
-    slug = models.SlugField(verbose_name='Slug', unique=True)
 
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+        ordering = ['-pk']
 
     def __str__(self):
         return self.title
@@ -84,6 +92,23 @@ class Follow(models.Model):
         ]
 
 
+class Purchase(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="purchases"
+    )
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE, related_name="purchases"
+    )
+
+    class Meta:
+        ordering = ['-pk']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'], name='unique_purchase'
+            )
+        ]
+
+
 class Favorite(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="favorites"
@@ -93,6 +118,7 @@ class Favorite(models.Model):
     )
 
     class Meta:
+        ordering = ['-pk']
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'], name='unique_favorite'

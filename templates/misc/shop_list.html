@@ -1,0 +1,4 @@
+<meta charset="utf-8">
+{% for ingr in ingredients %}
+    <p>{{ ingr.ingredient__title|capfirst }} ({{ ingr.ingredient__dimension }}) - {{ ingr.amount }}</p>
+{% endfor %}

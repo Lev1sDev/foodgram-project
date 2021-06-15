@@ -1,0 +1,12 @@
+{% load static %}
+{% block title %}Изменить пароль{% endblock %}
+{% block css %}<link rel="stylesheet" href="{% static 'pages/form.css' %}">{% endblock %}
+{% block menu %}{% include 'includes/nav.html'%}{% endblock %}
+{% block content %}
+
+    <div class="custom-center-block">
+        <h1>Сброс пароля выполнен</h1>
+        <p class="lead">Пароль изменён, все получилось</p>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Список покупок{% endblock %}
+{% block css %}<link rel="stylesheet" href="{% static 'pages/shopList.css' %}">{% endblock %}
+{% block menu %}{% include 'includes/nav.html' with purchases=True %}{% endblock %}
+{% block content %}
+    {% csrf_token %}
+    <div class="main__header">
+        <h1 class="main__title">Список покупок</h1>
+    </div>
+    <div class="card-list card-list_column">
+        <ul class="shopping-list">
+            {% if purchases.count == 0 %}
+            <h2 class="card__body">Список покупок пуст</h2>
+            {% endif %}
+            {% for purchase in purchases %}
+            <li class="shopping-list__item" data-id="{{ purchase.recipe.id }}">
+                <div class="recipe recipe_reverse">
+                    {% load thumbnail %}
+                    {% thumbnail purchase.recipe.image "850x500" crop="center" upscale=True as im %}
+                        <img class="recipe__image recipe__image_big" src="{{ im.url }}">
+                    {% endthumbnail %}
+                    <a class="card__title link" href="{% url 'recipe' purchase.recipe.author.username purchase.recipe.id%}" target="_blank">{{ purchase.recipe.title }}</a>
+                    <p class="recipe__text"><span class="icon-time"></span>
+                        {{ purchase.recipe.time }} мин.</p>
+                </div>
+                <a href="{% url 'purchase_delete' purchase.recipe.id %}" class="shopping-list__button link">Удалить</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% if purchases.count %}
+            <a href="{% url 'download' %}"><button class="button button_style_blue">Скачать список</button></a>
+        {% endif %}
+    </div>
+{% endblock %}
+
+
+{% block js %}<script src="{% static 'shopList.js' %}"></script>{% endblock %}
+

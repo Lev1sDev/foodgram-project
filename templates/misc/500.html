@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Рецепты{% endblock %}
+{% block css %}<link rel="stylesheet" href="{% static 'pages/index.css' %}">{% endblock %}
+{% block menu %}{% include 'includes/nav.html'%}{% endblock %}
+{% block content %}
+    <div class="custom-center-block">
+        <h1>Ошибка 500</h1>
+        <p class="lead">Ошибка на сервере, попробуйте обновить страницу или обратиться позже</p>
+        <p class="lead"><a href="{% url 'index' %}">Вернуться на главную</a></p>
+    </div>
+{% endblock %}

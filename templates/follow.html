@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Мои подписки{% endblock %}
+{% block css %}<link rel="stylesheet" href="{% static 'pages/myFollow.css' %}">{% endblock %}
+{% block menu %}{% include 'includes/nav.html' with follows=True %}{% endblock %}
+{% block content %}
+{% csrf_token %}
+    <div class="main__header">
+        <h1 class="main__title">Мои подписки</h1>
+    </div>
+    <div class="card-list">
+        {% for author in page %}
+            <div class="card-user" data-author="{{ author.id }}">
+                <div class="card-user__header">
+                    <a href="{% url 'profile' author.username %}"><h2 class="card-user__title">{{ author.get_full_name }}</h2></a>
+                </div>
+                <div class="card-user__body">
+                    <ul class="card-user__items">
+                        {% for recipe in author.recipes.all|slice:":3" %}
+                            <li class="card-user__item">
+                                <div class="recipe">
+                                    {% load thumbnail %}
+                                    {% thumbnail recipe.image "850x500" crop="center" upscale=True as im %}
+                                        <img class="recipe__image recipe__image_big" src="{{ im.url }}">
+                                    {% endthumbnail %}
+                                    <h3 class="recipe__title">{{ recipe.title }}</h3>
+                                    <p class="recipe__text"><span class="icon-time"></span> {{ recipe.time }} мин.</p>
+                                </div>
+                            </li>
+                        {% endfor %}
+                        {% if author.recipes.count > 3 %}
+                            <li class="card-user__item">
+                                <a href="#" class="card-user__link link">Еще {{ author.recipes.count|add:"-3" }} рецептов...</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="card-user__footer">
+                    <p style="padding: 0 0 2em 0;"><a class="button button_style_light-blue" href="{% url 'subscriptions_delete' author.id %}">Отписаться</a></p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if page.has_other_pages %}
+        {% include "includes/paginator.html" with items=page paginator=paginator %}
+    {% endif %}
+
+{% endblock %}
+
+{% block js %}
+    <script src="{% static '/js/components/MyFollow.js' %}"></script>
+    <script src="{% static 'js/components/Subscribe.js' %}"></script>
+    <script src="{% static '/js/config/config.js' %}"></script>
+    <script src="{% static '/js/components/MainCards.js' %}"></script>
+    <script src="{% static '/js/components/Header.js' %}"></script>
+    <script src="{% static '/js/api/Api.js' %}"></script>
+    <script src="{% static 'myFollow.js' %}"></script>
+{% endblock %}

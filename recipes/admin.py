@@ -13,7 +13,6 @@ class RecipeAdmin(admin.ModelAdmin):
     inlines = [RecipeIngredientInline]
     list_display = ('title', 'author',)
     list_filter = ('title', 'author', 'tag',)
-    prepopulated_fields = {'slug': ('title',)}
 
 
 @admin.register(Ingredient)
@@ -29,7 +28,7 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ('title',)
 
 
-admin.site.register(RecipeIngredient)
 admin.site.register(Follow)
 admin.site.register(Favorite)
+admin.site.register(RecipeIngredient)
 
