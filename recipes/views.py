@@ -35,8 +35,8 @@ def index(request):
 
 def recipe_view(request, username, recipe_id):
     recipe = get_object_or_404(Recipe, author__username=username, id=recipe_id)
-    purchase = Purchase.objects.filter(user=request.user.id, recipe=recipe)
-    favorite = Favorite.objects.filter(user=request.user.id, recipe=recipe)
+    purchase = recipe.purchases.filter(user=request.user.id)
+    favorite = recipe.favorites.filter(user=request.user.id)
     following = Follow.objects.filter(
         author=recipe.author.id, user=request.user.id
     )
@@ -151,7 +151,9 @@ def favorites(request):
     if request.GET.get('tag'):
         for tag in request.GET.getlist('tag'):
             objs.append(Tag.objects.get(slug=tag))
-        favorites = Favorite.objects.filter(recipe__tag__in=objs, user=request.user)
+        favorites = Favorite.objects.filter(
+            recipe__tag__in=objs, user=request.user
+        )
     paginator = Paginator(favorites, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)

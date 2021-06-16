@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 from django.db import models
 
 User = get_user_model()
@@ -54,7 +55,13 @@ class Recipe(models.Model):
     tag = models.ManyToManyField(
         Tag, verbose_name='Тэг', related_name='recipes'
     )
-    time = models.PositiveIntegerField(verbose_name='Время приготовления')
+    time = models.PositiveIntegerField(
+        verbose_name='Время приготовления',
+        validators=[MinValueValidator(
+            1,
+            message='Время приготовления не может быть меньше минуты'
+        ), ]
+    )
 
     class Meta:
         verbose_name = 'Рецепт'
@@ -75,16 +82,22 @@ class RecipeIngredient(models.Model):
     )
     amount = models.PositiveIntegerField(verbose_name='Количество')
 
+    class Meta:
+        verbose_name = 'Ингредиент рецепта'
+        verbose_name_plural = 'Ингредиенты рецепта'
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="follower"
+        User, on_delete=models.CASCADE, related_name='follower'
     )
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="following"
+        User, on_delete=models.CASCADE, related_name='following'
     )
 
     class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'author'], name='unique_follow'
@@ -94,13 +107,15 @@ class Follow(models.Model):
 
 class Purchase(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="purchases"
+        User, on_delete=models.CASCADE, related_name='purchases'
     )
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name="purchases"
+        Recipe, on_delete=models.CASCADE, related_name='purchases'
     )
 
     class Meta:
+        verbose_name = 'Покупка'
+        verbose_name_plural = 'Покупки'
         ordering = ['-pk']
         constraints = [
             models.UniqueConstraint(
@@ -111,18 +126,18 @@ class Purchase(models.Model):
 
 class Favorite(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="favorites"
+        User, on_delete=models.CASCADE, related_name='favorites'
     )
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name="favorites"
+        Recipe, on_delete=models.CASCADE, related_name='favorites'
     )
 
     class Meta:
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранные'
         ordering = ['-pk']
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'], name='unique_favorite'
             )
         ]
-
-

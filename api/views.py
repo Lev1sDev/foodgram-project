@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework.decorators import api_view
 
-from .models import Favorite, Follow, Ingredient, Purchase, Recipe, User
+from recipes.models import Favorite, Follow, Ingredient, Purchase, Recipe, User
 from .serializers import IngredientSerializer
 
 
@@ -20,11 +20,7 @@ def search_ingredients(request):
 def purchase_post(request):
     recipe_pk = request.data['id']
     recipe = get_object_or_404(Recipe, pk=recipe_pk)
-    purchase = Purchase.objects.filter(
-        user=request.user, recipe__pk=recipe_pk
-    ).exists()
-    if not purchase:
-        Purchase.objects.create(user=request.user, recipe=recipe)
+    Purchase.objects.get_or_create(user=request.user, recipe=recipe)
     return JsonResponse({'status_code': '200'})
 
 
@@ -32,8 +28,7 @@ def purchase_post(request):
 @api_view(['DELETE', 'GET'])
 def purchase_delete(request, recipe_id):
     purchase = Purchase.objects.filter(user=request.user, recipe__id=recipe_id)
-    if purchase.exists():
-        purchase.delete()
+    purchase.delete()
     if request.method == 'GET':
         return redirect('purchases')
     return JsonResponse({'status_code': '204'})
@@ -44,11 +39,7 @@ def purchase_delete(request, recipe_id):
 def favorite_post(request):
     recipe_pk = request.data['id']
     recipe = get_object_or_404(Recipe, pk=recipe_pk)
-    favorite = Favorite.objects.filter(
-        user=request.user, recipe__pk=recipe_pk
-    ).exists()
-    if not favorite:
-        Favorite.objects.create(user=request.user, recipe=recipe)
+    Favorite.objects.get_or_create(user=request.user, recipe=recipe)
     return JsonResponse({'status_code': '200'})
 
 
@@ -56,8 +47,7 @@ def favorite_post(request):
 @api_view(['DELETE'])
 def favorite_delete(request, recipe_id):
     favorite = Favorite.objects.filter(user=request.user, recipe__id=recipe_id)
-    if favorite.exists():
-        favorite.delete()
+    favorite.delete()
     return JsonResponse({'status_code': '204'})
 
 
@@ -65,8 +55,7 @@ def favorite_delete(request, recipe_id):
 @api_view(['DELETE', 'GET'])
 def subscriptions_delete(request, author_id):
     following = Follow.objects.filter(user=request.user, author__id=author_id)
-    if following.exists():
-        following.delete()
+    following.delete()
     if request.method == 'GET':
         return redirect('follow_index')
     return JsonResponse({'status_code': '204'})
