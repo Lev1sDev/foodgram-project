@@ -1,45 +1,34 @@
-import os
 import io
-from django.db.models import Sum
+
+import pdfkit
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.shortcuts import get_object_or_404, redirect, render
 from django.db import transaction
-from django.conf import settings
-from django.http import HttpResponse, Http404, FileResponse
-from .utils import save_recipe, get_tags, get_ingredients
-import pdfkit
+from django.db.models import Sum
+from django.http import FileResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import get_template
 
 from .forms import RecipeForm
-from .models import Recipe, Ingredient, Favorite, Follow, User, Tag, \
-    RecipeIngredient, Purchase
+from .models import (Favorite, Follow, Purchase, Recipe, RecipeIngredient, Tag,
+                     User)
+from .utils import get_ingredients, get_tags, save_recipe
 
 
 def index(request):
     tags = Tag.objects.all()
     recipes = Recipe.objects.all()
+    objs = []
+    if request.GET.get('tag'):
+        for tag in request.GET.getlist('tag'):
+            objs.append(Tag.objects.get(slug=tag))
+        recipes = Recipe.objects.filter(tag__in=objs)
     paginator = Paginator(recipes, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(
         request, 'index.html', {
-            'page': page, 'paginator': paginator, 'tags': tags,
-        }
-    )
-
-
-def tag_index(request, tag_slug):
-    tag = Tag.objects.get(slug=tag_slug)
-    tags = Tag.objects.all()
-    recipes = Recipe.objects.filter(tag=tag)
-    paginator = Paginator(recipes, 6)
-    page_number = request.GET.get('page')
-    page = paginator.get_page(page_number)
-    return render(
-        request, 'index.html', {
-            'page': page, 'paginator': paginator,
-            'tags': tags, 'title': tag.title
+            'page': page, 'paginator': paginator, 'tags': tags, 'objs': objs
         }
     )
 
@@ -67,6 +56,11 @@ def profile(request, username):
     author = get_object_or_404(User, username=username)
     recipes = author.recipes.all()
     tags = Tag.objects.all()
+    objs = []
+    if request.GET.get('tag'):
+        for tag in request.GET.getlist('tag'):
+            objs.append(Tag.objects.get(slug=tag))
+        recipes = author.recipes.filter(tag__in=objs)
     paginator = Paginator(recipes, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -83,31 +77,7 @@ def profile(request, username):
         'followers': followers,
         'follow': follow,
         'tags': tags,
-    })
-
-
-def tag_profile(request, username, tag_slug):
-    author = get_object_or_404(User, username=username)
-    tag = Tag.objects.get(slug=tag_slug)
-    tags = Tag.objects.all()
-    recipes = author.recipes.filter(tag=tag)
-    paginator = Paginator(recipes, 10)
-    page_number = request.GET.get('page')
-    page = paginator.get_page(page_number)
-    following = Follow.objects.filter(
-        author=author.id, user=request.user.id
-    )
-    followers = author.following.count()
-    follow = author.follower.count()
-    return render(request, 'profile.html', {
-        'author': author,
-        'page': page,
-        'paginator': paginator,
-        'following': following,
-        'followers': followers,
-        'follow': follow,
-        'tags': tags,
-        'title': tag.title,
+        'objs': objs,
     })
 
 
@@ -155,7 +125,9 @@ def recipe_edit(request, username, recipe_id):
     ingredients = get_ingredients(request.POST)
     if not form.is_valid() or not tags or not ingredients:
         return render(
-            request, 'new_recipe.html', {'form': form, 'recipe': recipe, 'count': -count}
+            request, 'new_recipe.html', {
+                'form': form, 'recipe': recipe, 'count': -count
+            }
         )
     with transaction.atomic():
         recipe = form.save(commit=False)
@@ -175,26 +147,16 @@ def purchases(request):
 def favorites(request):
     tags = Tag.objects.all()
     favorites = Favorite.objects.filter(user=request.user)
+    objs = []
+    if request.GET.get('tag'):
+        for tag in request.GET.getlist('tag'):
+            objs.append(Tag.objects.get(slug=tag))
+        favorites = Favorite.objects.filter(recipe__tag__in=objs, user=request.user)
     paginator = Paginator(favorites, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(request, 'favorite.html', {
-        'page': page, 'paginator': paginator, 'tags': tags
-    })
-
-
-@login_required
-def tag_favorites(request, tag_slug):
-    tags = Tag.objects.all()
-    tag = Tag.objects.get(slug=tag_slug)
-    favorites = Favorite.objects.filter(
-        user=request.user, recipe__tag=tag
-    )
-    paginator = Paginator(favorites, 6)
-    page_number = request.GET.get('page')
-    page = paginator.get_page(page_number)
-    return render(request, 'favorite.html', {
-        'page': page, 'paginator': paginator, 'tags': tags, 'title': tag.title
+        'page': page, 'paginator': paginator, 'tags': tags, 'objs': objs
     })
 
 
@@ -206,11 +168,14 @@ def create_pdf(template_name, context):
 
 @login_required
 def purchases_download(request):
-    ingredients = RecipeIngredient.objects.values('ingredient__title', 'ingredient__dimension').filter(
+    ingredients = RecipeIngredient.objects.values(
+        'ingredient__title', 'ingredient__dimension').filter(
         recipe__purchases__user=request.user).annotate(amount=Sum('amount'))
     pdf = create_pdf('misc/shop_list.html', {'ingredients': ingredients}
                      )
-    return FileResponse(io.BytesIO(pdf), filename='shop_list.pdf', as_attachment=True)
+    return FileResponse(
+        io.BytesIO(pdf), filename='shop_list.pdf', as_attachment=True
+    )
 
 
 def page_not_found(request, exception):

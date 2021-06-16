@@ -1,1 +1,1 @@
-from recipes.models import Recipe, Ingredient, Purchase, User, Favorite, Follow
+from recipes.models import Favorite, Follow, Ingredient, Purchase, Recipe, User

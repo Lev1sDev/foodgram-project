@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Технологии{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'pages/form.css' %}"
+          xmlns="http://www.w3.org/1999/html">{% endblock %}
+{% block menu %}{% include 'includes/nav.html'%}{% endblock %}
+{% block content %}
+    <div class="custom-center-block">
+        <h1>Технологии</h1>
+        <p class="lead">
+            FoodGram - социальная сеть для публикации рецептов.<br> <br>
+            Стек технологий: Python 3, JavaScript, Django REST Framework API, Django 3.2, PostgreSQL, Docker, gunicorn, nginx, Яндекс.Облако (Ubuntu 18.04), GitHub Actions.
+        </p>
+    </div>
+{% endblock %}

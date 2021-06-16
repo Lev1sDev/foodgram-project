@@ -11,18 +11,20 @@
                 {% for tag in tags %}
                     <li class="tags__item">
                         <a id="breakfast" class="tags__checkbox tags__checkbox_style_{{ tag.color }}
-                        tags__checkbox_{% if tag.title == title %}active{% endif %}"
-                           href="{% url 'tag_profile' author.username tag.slug %}"></a>
+                        tags__checkbox_{% if tag in objs %}active{% endif %}"
+                           href="{% url 'profile' author.username %}?tag={{ tag.slug }}"></a>
                         <span class="tags__label">{{ tag.title|title }}</span>
                     </li>
                 {% endfor %}
             </ul>
         </div>
         <div class="author-subscribe" data-author="{{ author.id }}">
-            {% if following %}
-                <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue-outline" name="subscribe">Отписаться</button></p>
-            {% elif not following and author != user %}
-                <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
+            {% if user.is_authenticated %}
+                {% if following %}
+                    <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue-outline" name="subscribe">Отписаться</button></p>
+                {% elif not following and author != user %}
+                    <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
+                {% endif %}
             {% endif %}
         </div>
         <div class="card-list">

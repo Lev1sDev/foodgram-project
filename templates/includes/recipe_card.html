@@ -27,19 +27,33 @@
         </div>
     </div>
     <div class="card__footer">
-        {% for purchase in recipe.purchases.all %}
-            {% include 'includes/button_purchase.html' with purchase=purchase %}
-        {% empty %}
-            <button class="button button_style_light-blue" name="purchases"
-                    data-out><span class="icon-plus button__icon"></span>Добавить
-                в покупки
-            </button>
-        {% endfor %}
-        {% for favorite in recipe.favorites.all %}
-            {% include 'includes/button_favorite.html' with favorite=favorite %}
-        {% empty %}
-            <button class="button button_style_none" name="favorites" data-out>
-                <span class="icon-favorite icon-favorite_big"></span></button>
-        {% endfor %}
+        {% if user.is_authenticated %}
+            {% for purchase in recipe.purchases.all %}
+                {% if purchase.user == user and purchase.recipe == recipe %}
+                    <button class="button button_style_light-blue-outline"
+                            name="purchases"><span
+                            class="icon-check button__icon"></span> Рецепт добавлен
+                    </button>
+                {% else %}
+                    <button class="button button_style_light-blue" name="purchases"
+                        data-out><span class="icon-plus button__icon"></span>Добавить
+                    в покупки
+                    </button>
+                {% endif %}
+            {% empty %}
+                <button class="button button_style_light-blue" name="purchases"
+                        data-out><span class="icon-plus button__icon"></span>Добавить
+                    в покупки
+                </button>
+            {% endfor %}
+            {% for favorite in recipe.favorites.all %}
+                {% include 'includes/button_favorite.html' %}
+            {% empty %}
+                <button class="button button_style_none" name="favorites"
+                        data-out>
+                    <span class="icon-favorite icon-favorite_big"></span>
+                </button>
+            {% endfor %}
+        {% endif %}
     </div>
 </div>

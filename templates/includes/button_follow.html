@@ -1,10 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% if following %}
+    <li class="single-card__item">
+        <button class="button button_style_light-blue-outline" name="subscribe">
+            Отписаться
+        </button>
+    </li>
+{% elif not following and recipe.author != user %}
+    <li class="single-card__item">
+        <button class="button button_style_light-blue button_size_subscribe"
+                name="subscribe" data-out>Подписаться на автора
+        </button>
+    </li>
+{% endif %}

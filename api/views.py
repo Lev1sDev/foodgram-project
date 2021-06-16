@@ -2,8 +2,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework.decorators import api_view
+
+from .models import Favorite, Follow, Ingredient, Purchase, Recipe, User
 from .serializers import IngredientSerializer
-from .models import Ingredient, Purchase, User, Recipe, Favorite, Follow
 
 
 @api_view(['GET'])

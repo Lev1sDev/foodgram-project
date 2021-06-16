@@ -11,8 +11,8 @@
                 {% for tag in tags %}
                     <li class="tags__item">
                         <a id="breakfast" class="tags__checkbox tags__checkbox_style_{{ tag.color }}
-                        tags__checkbox_{% if tag.title == title %}active{% endif %}"
-                           href="{% url 'tag_favorites' tag.slug %}"></a>
+                        tags__checkbox_{% if tag in objs %}active{% endif %}"
+                           href="{% url 'favorites' %}?tag={{ tag.slug }}"></a>
                         <span class="tags__label">{{ tag.title|title }}</span>
                     </li>
                 {% endfor %}

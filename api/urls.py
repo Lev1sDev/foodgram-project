@@ -1,6 +1,7 @@
 from django.urls import include, path
-from . import views
 from rest_framework.routers import DefaultRouter
+
+from . import views
 
 urlpatterns = [
     path('ingredients', views.search_ingredients, name='ingredients'),

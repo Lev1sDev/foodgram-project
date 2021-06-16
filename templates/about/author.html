@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Об авторе{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'pages/form.css' %}"
+          xmlns="http://www.w3.org/1999/html">{% endblock %}
+{% block menu %}{% include 'includes/nav.html'%}{% endblock %}
+{% block content %}
+    <div class="custom-center-block">
+        <h1>Об авторе</h1>
+        <p class="lead">
+            Меня зовут Лев, и я - создатель этого полезного для повседневной жизни сервиса для публикации рецептов. Приятного аппетита!<br> <br>
+            <a href="https://github.com/Lev1sDev">Мой GitHub</a> <br> <br>
+            <a href="https://spb.hh.ru/resume/682d8c77ff08ea8cb80039ed1f4670366e6b73">Резюме на HeadHunter</a>
+        </p>
+    </div>
+{% endblock %}

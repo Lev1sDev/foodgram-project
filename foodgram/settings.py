@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'rest_framework',
     'api',
+    'django_filters',
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
