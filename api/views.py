@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect
 from rest_framework.decorators import api_view
 
 from recipes.models import Favorite, Follow, Ingredient, Purchase, Recipe, User
+
 from .serializers import IngredientSerializer
 
 

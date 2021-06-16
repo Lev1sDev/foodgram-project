@@ -8,6 +8,7 @@ from django.db.models import Sum
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import get_template
+
 from foodgram.settings import PAGE_SIZE
 
 from .forms import RecipeForm
@@ -36,20 +37,12 @@ def index(request):
 
 def recipe_view(request, username, recipe_id):
     recipe = get_object_or_404(Recipe, author__username=username, id=recipe_id)
-    purchase = recipe.purchases.filter(user=request.user.id)
-    favorite = recipe.favorites.filter(user=request.user.id)
     following = Follow.objects.filter(
         author=recipe.author.id, user=request.user.id
     )
-    followers = recipe.author.following.count()
-    follow = recipe.author.follower.count()
     return render(request, 'recipe.html', {
         'recipe': recipe,
-        'purchase': purchase,
-        'favorite': favorite,
         'following': following,
-        'followers': followers,
-        'follow': follow,
     })
 
 
@@ -68,15 +61,11 @@ def profile(request, username):
     following = Follow.objects.filter(
         author=author.id, user=request.user.id
     )
-    followers = author.following.count()
-    follow = author.follower.count()
     return render(request, 'profile.html', {
         'author': author,
         'page': page,
         'paginator': paginator,
         'following': following,
-        'followers': followers,
-        'follow': follow,
         'tags': tags,
         'objs': objs,
     })

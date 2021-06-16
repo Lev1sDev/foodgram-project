@@ -15,7 +15,7 @@
                     <h1 class="single-card__title">{{ recipe.title }}</h1>
                     <div class="single-card__favorite">
                         {% if user.is_authenticated %}
-                            {% include 'includes/button_favorite.html' with favorite=favorite %}
+                            {% include 'includes/button_favorite.html' with recipe=recipe user=user %}
                             <div class="single-card__favorite-tooltip tooltip">Добавить в избранное</div>
                         {% endif %}
                     </div>
@@ -38,8 +38,8 @@
                 </div>
                 <ul class="single-card__items">
                     {% if user.is_authenticated %}
-                        {% include 'includes/button_purchase.html' with purchase=purchase %}
-                        {% include 'includes/button_follow.html' with follow=follow %}
+                        {% include 'includes/button_purchase.html' with recipe=recipe user=user %}
+                        {% include 'includes/button_follow.html' with following=following %}
                     {% endif %}
                 </ul>
                 <div class="single-card__section">
