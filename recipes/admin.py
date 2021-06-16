@@ -32,4 +32,3 @@ class TagAdmin(admin.ModelAdmin):
 admin.site.register(Follow)
 admin.site.register(Favorite)
 admin.site.register(RecipeIngredient)
-
