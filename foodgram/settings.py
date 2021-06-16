@@ -103,10 +103,7 @@ STATICFILES_DIRS = [
     'static/',
 ]
 
-REST_FRAMEWORK = {
-        'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-        'PAGE_SIZE': 6
-    }
+PAGE_SIZE = 6
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

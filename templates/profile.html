@@ -32,6 +32,10 @@
                 {% include 'includes/recipe_card.html' with recipe=recipe %}
             {% endfor %}
         </div>
+
+        {% if page.has_other_pages %}
+            {% include "includes/paginator.html" with items=page paginator=paginator %}
+        {% endif %}
 {% endblock %}
 
 {% block js %}

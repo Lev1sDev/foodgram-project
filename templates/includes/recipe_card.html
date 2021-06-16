@@ -35,7 +35,7 @@
                             class="icon-check button__icon"></span> Рецепт
                         добавлен
                     </button>
-                {% else %}
+                {% elif forloop.counter == recipe.purchases.count %}
                     <button class="button button_style_light-blue"
                             name="purchases"
                             data-out><span

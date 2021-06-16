@@ -8,6 +8,7 @@ from django.db.models import Sum
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import get_template
+from foodgram.settings import PAGE_SIZE
 
 from .forms import RecipeForm
 from .models import (Favorite, Follow, Purchase, Recipe, RecipeIngredient, Tag,
@@ -23,7 +24,7 @@ def index(request):
         for tag in request.GET.getlist('tag'):
             objs.append(Tag.objects.get(slug=tag))
         recipes = Recipe.objects.filter(tag__in=objs)
-    paginator = Paginator(recipes, 6)
+    paginator = Paginator(recipes, PAGE_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(
@@ -61,7 +62,7 @@ def profile(request, username):
         for tag in request.GET.getlist('tag'):
             objs.append(Tag.objects.get(slug=tag))
         recipes = author.recipes.filter(tag__in=objs)
-    paginator = Paginator(recipes, 10)
+    paginator = Paginator(recipes, PAGE_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     following = Follow.objects.filter(
@@ -84,7 +85,7 @@ def profile(request, username):
 @login_required
 def follow_index(request):
     authors = User.objects.filter(following__user=request.user)
-    paginator = Paginator(authors, 6)
+    paginator = Paginator(authors, PAGE_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(
@@ -154,7 +155,7 @@ def favorites(request):
         favorites = Favorite.objects.filter(
             recipe__tag__in=objs, user=request.user
         )
-    paginator = Paginator(favorites, 6)
+    paginator = Paginator(favorites, PAGE_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(request, 'favorite.html', {
