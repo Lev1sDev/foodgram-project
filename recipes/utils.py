@@ -1,4 +1,6 @@
+import pdfkit
 from django.shortcuts import get_object_or_404
+from django.template.loader import get_template
 
 from .models import Ingredient, RecipeIngredient, Tag
 
@@ -42,3 +44,9 @@ def save_recipe(post, recipe):
             )
         )
     RecipeIngredient.objects.bulk_create(objs)
+
+
+def create_pdf(template_name, context):
+    pdf_options = {'page-size': 'A4', 'encoding': 'UTF-8', }
+    html = get_template(template_name).render(context)
+    return pdfkit.from_string(html, False, options=pdf_options)

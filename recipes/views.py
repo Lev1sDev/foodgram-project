@@ -1,20 +1,18 @@
 import io
 
-import pdfkit
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Sum
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template.loader import get_template
 
 from foodgram.settings import PAGE_SIZE
 
 from .forms import RecipeForm
 from .models import (Favorite, Follow, Purchase, Recipe, RecipeIngredient, Tag,
                      User)
-from .utils import get_ingredients, get_tags, save_recipe
+from .utils import create_pdf, get_ingredients, get_tags, save_recipe
 
 
 def index(request):
@@ -82,7 +80,7 @@ def follow_index(request):
     )
 
 
-@login_required()
+@login_required
 def new_recipe(request):
     form = RecipeForm(request.POST or None, files=request.FILES or None)
     tags = get_tags(request.POST)
@@ -150,12 +148,6 @@ def favorites(request):
     return render(request, 'favorite.html', {
         'page': page, 'paginator': paginator, 'tags': tags, 'objs': objs
     })
-
-
-def create_pdf(template_name, context):
-    pdf_options = {'page-size': 'A4', 'encoding': 'UTF-8', }
-    html = get_template(template_name).render(context)
-    return pdfkit.from_string(html, False, options=pdf_options)
 
 
 @login_required
