@@ -62,8 +62,8 @@ jobs:
             sudo docker-compose stop
             sudo docker image prune -af
             touch .env
-            echo EMAIL_USER=${{ secrets.EMAIL_USER }} >> .env
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+            echo EMAIL_USER=${{ secrets.EMAIL_USER }} >> .env
             echo EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} >> .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
