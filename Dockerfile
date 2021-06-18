@@ -1,6 +1,7 @@
 FROM python:3.8.5
 
 WORKDIR /code
+RUN mkdir /media
 COPY requirements.txt .
 RUN apt-get update && apt-get install -y wkhtmltopdf \
                    && pip install -r requirements.txt
