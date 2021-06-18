@@ -22,13 +22,14 @@ def index(request):
     if request.GET.get('tag'):
         for tag in request.GET.getlist('tag'):
             objs.append(Tag.objects.get(slug=tag))
-        recipes = Recipe.objects.filter(tag__in=objs)
+        recipes = Recipe.objects.filter(tag__in=objs).distinct()
     paginator = Paginator(recipes, PAGE_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(
         request, 'index.html', {
-            'page': page, 'paginator': paginator, 'tags': tags, 'objs': objs
+            'page': page, 'paginator': paginator, 'tags': tags, 'objs': objs,
+            'recipes': recipes
         }
     )
 
@@ -52,7 +53,7 @@ def profile(request, username):
     if request.GET.get('tag'):
         for tag in request.GET.getlist('tag'):
             objs.append(Tag.objects.get(slug=tag))
-        recipes = author.recipes.filter(tag__in=objs)
+        recipes = author.recipes.filter(tag__in=objs).distinct()
     paginator = Paginator(recipes, PAGE_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -141,7 +142,7 @@ def favorites(request):
             objs.append(Tag.objects.get(slug=tag))
         favorites = Favorite.objects.filter(
             recipe__tag__in=objs, user=request.user
-        )
+        ).distinct()
     paginator = Paginator(favorites, PAGE_SIZE)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
