@@ -24,3 +24,11 @@ def tag_filter(value, field):
         else:
             url += f'tag={value[i].slug}&'
     return url
+
+
+@register.filter
+def tag_filter_page(value):
+    url = '?'
+    for i in range(len(value)):
+        url += f'tag={value[i].slug}&'
+    return url

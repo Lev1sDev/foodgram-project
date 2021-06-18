@@ -34,8 +34,8 @@
             {% endfor %}
         </div>
 
-        {% if page.has_other_pages and not objs %}
-            {% include "includes/paginator.html" with items=page paginator=paginator %}
+        {% if page.has_other_pages %}
+            {% include "includes/paginator.html" with items=page paginator=paginator objs=objs %}
         {% endif %}
 {% endblock %}
 
