@@ -63,6 +63,7 @@ jobs:
             sudo docker image prune -af
             touch .env
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+            echo HOST=${{ secrets.HOST }} >> .env
             echo EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} >> .env
             echo EMAIL_USER=${{ secrets.EMAIL_USER }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
@@ -75,7 +76,6 @@ jobs:
             sudo docker-compose exec web mkdir media
             sudo docker-compose exec -T web python manage.py makemigrations recipes
             sudo docker-compose exec -T web python manage.py migrate --no-input
-            sudo docker-compose exec -T web python manage.py loaddata data.json
             sudo docker-compose exec -T web python manage.py collectstatic --no-input
 
   send_message:
