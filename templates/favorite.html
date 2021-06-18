@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load filter %}
 {% block title %}Избранное{% endblock %}
 {% block css %}<link rel="stylesheet" href="{% static 'pages/index.css' %}">{% endblock %}
 {% block menu %}{% include 'includes/nav.html' with favorites=True %}{% endblock %}
@@ -12,7 +13,7 @@
                     <li class="tags__item">
                         <a id="breakfast" class="tags__checkbox tags__checkbox_style_{{ tag.color }}
                         tags__checkbox_{% if tag in objs %}active{% endif %}"
-                           href="{% url 'favorites' %}?tag={{ tag.slug }}"></a>
+                           href="{% url 'favorites' %}{{ objs|tag_filter:tag }}"></a>
                         <span class="tags__label">{{ tag.title|title }}</span>
                     </li>
                 {% endfor %}
@@ -25,7 +26,7 @@
             {% endfor %}
         </div>
 
-        {% if page.has_other_pages %}
+        {% if page.has_other_pages and not objs %}
             {% include "includes/paginator.html" with items=page paginator=paginator %}
         {% endif %}
 
