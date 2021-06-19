@@ -10,6 +10,9 @@ def get_ingredients(post):
     for key, name in post.items():
         if key.startswith('nameIngredient'):
             num = key.partition('_')[-1]
+            amount = post[f'valueIngredient_{num}']
+            if not amount.isdigit() or amount[0] in '0':
+                return False
             ingredients[name] = post[f'valueIngredient_{num}']
     return ingredients
 

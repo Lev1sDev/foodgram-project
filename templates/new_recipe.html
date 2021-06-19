@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Мои подписки{% endblock %}
+{% block title %}
+    {% if recipe %}
+        Редактирование рецепта
+    {% else %}
+        Создание рецепта
+    {% endif %}
+{% endblock %}
 {% block css %}<link rel="stylesheet" href="{% static 'pages/form.css' %}">{% endblock %}
 {% block menu %}{% include 'includes/nav.html' with new_recipe=True %}{% endblock %}
 {% block content %}
@@ -10,7 +16,7 @@
             {% if recipe %}
                 Редактирование рецепта
             {% else %}
-                Создание поста
+                Создание рецепта
             {% endif %}
         </h1>
     </div>
